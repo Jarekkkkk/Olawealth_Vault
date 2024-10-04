@@ -1,3 +1,5 @@
+export type MoveCallTarget = `${string}::${string}::${string}`;
+
 export const OLA_ST_SBUCK_TYPE =
   "0xcc93039d86ebb5fdf6818267a569c6b155c5bd64333949b91e4c796cc90018bb::ola_st_sbuck::OLA_ST_SBUCK";
 export const SHARED_OBJECTS = {
@@ -41,4 +43,22 @@ export const TARGETS = {
   // Bucket
   BUCKET_CHARGE_RESERVOIR:
     "0xb71c0893203d0f59622fc3fac849d0833de559d7503af21c5daf880d60d754ed::buck::charge_reservoir",
+};
+
+export const CETUS_CONFIG = {
+  //targets
+  swapTarget:
+    "0x6f5e582ede61fe5395b50c4a449ec11479a54d7ff8e0158247adfda60d98970b::router::swap" as MoveCallTarget,
+  globalConfigObj: {
+    objectId:
+      "0xdaa46292632c3c4d8f31f23ea0f9b36a28ff3677e9684980e4438403a67a3d8f",
+    initialSharedVersion: 1574190,
+    mutable: false,
+  },
+  buckUsdcPoolObj: {
+    objectId:
+      "0x6ecf6d01120f5f055f9a605b56fd661412a81ec7c8b035255e333c664a0c12e7",
+    initialSharedVersion: 11391673,
+    mutable: true,
+  },
 };

@@ -8,6 +8,7 @@ import {
 } from "bucket-protocol-sdk";
 import {
   bucketPSMSwapForBuck,
+  cetusSwapBuckToUsdc,
   st_buck_saving_vault_deposit,
   st_buck_saving_vault_withdraw,
 } from "./operation";
@@ -81,7 +82,10 @@ export async function stBuckSavingVaultWithdraw(
     COINS_TYPE_LIST.BUCK,
     buckBalance as any,
   );
-  tx.transferObjects([buckCoin as any], senderAddress);
+
+  const usdcCoin = cetusSwapBuckToUsdc(tx, senderAddress, buckCoin);
+
+  tx.transferObjects([usdcCoin], senderAddress);
 
   return tx;
 }

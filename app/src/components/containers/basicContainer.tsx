@@ -46,12 +46,13 @@ const BasicContainer = () => {
     let tx = new Transaction();
 
     // PTB part
-    const value_ = Math.floor(
-      parseFloat(inputValue) * 10 ** COIN_DECIMALS[selectedToken as COIN],
-    );
     if (action === "deposit") {
+      const value_ = Math.floor(
+        parseFloat(inputValue) * 10 ** COIN_DECIMALS[selectedToken as COIN],
+      );
       tx = await stBuckSavingVaultDeposit(client, account.address, value_);
     } else {
+      const value_ = Math.floor(parseFloat(inputValue) * 10 ** 9);
       tx = await stBuckSavingVaultWithdraw(client, account.address, value_);
     }
 

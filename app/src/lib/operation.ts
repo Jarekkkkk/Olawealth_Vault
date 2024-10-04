@@ -1,4 +1,9 @@
-import { OLA_ST_SBUCK_TYPE, SHARED_OBJECTS, TARGETS } from "@/constants/config";
+import {
+  CETUS_CONFIG,
+  OLA_ST_SBUCK_TYPE,
+  SHARED_OBJECTS,
+  TARGETS,
+} from "@/constants/config";
 import {
   Transaction,
   TransactionArgument,
@@ -72,4 +77,55 @@ export function bucketPSMSwapForBuck(
     typeArguments: [coinType],
     arguments: [tx.sharedObjectRef(PROTOCOL_OBJECT), balance],
   });
+}
+
+export function newZeroCoin(
+  tx: Transaction,
+  coinType: string,
+): TransactionResult {
+  return tx.moveCall({
+    target: "0x2::coin::zero",
+    typeArguments: [coinType],
+  });
+}
+
+export function getCoinValue(
+  tx: Transaction,
+  coinType: string,
+  coin: TransactionArgument,
+): TransactionResult {
+  return tx.moveCall({
+    target: "0x2::coin::value",
+    typeArguments: [coinType],
+    arguments: [coin],
+  });
+}
+
+export function cetusSwapBuckToUsdc(
+  tx: Transaction,
+  senderAddress: string,
+  buckCoin: TransactionArgument,
+): TransactionArgument {
+  const zeroUsdcCoin = newZeroCoin(tx, COINS_TYPE_LIST.USDC);
+  const buckCoinValue = getCoinValue(tx, COINS_TYPE_LIST.BUCK, buckCoin);
+
+  const [buckOutCoin, usdcOutCoin] = tx.moveCall({
+    target: CETUS_CONFIG.swapTarget,
+    typeArguments: [COINS_TYPE_LIST.BUCK, COINS_TYPE_LIST.USDC],
+    arguments: [
+      tx.sharedObjectRef(CETUS_CONFIG.globalConfigObj),
+      tx.sharedObjectRef(CETUS_CONFIG.buckUsdcPoolObj),
+      buckCoin,
+      zeroUsdcCoin,
+      tx.pure.bool(true),
+      tx.pure.bool(true),
+      buckCoinValue,
+      tx.pure.u128("4295048016"),
+      tx.pure.bool(false),
+      tx.sharedObjectRef(CLOCK_OBJECT),
+    ],
+  });
+
+  tx.transferObjects([buckOutCoin], senderAddress);
+  return usdcOutCoin;
 }
