@@ -2,13 +2,15 @@ export const SLIPPAGE = 0.005;
 
 export const SHARED_OBJECTS = {
   ST_SBUCK_SAVING_VAULT: {
-    objectId: "",
-    initialSharedVersion: 0,
+    objectId:
+      "0xb3238f6dfc2f59351d466e885f7ec5e0c09219caa44cc3815504e23e5a24d480",
+    initialSharedVersion: 343316057,
     mutable: true,
   },
   SBUCK_SAVING_VAULT_STRATEGY: {
-    objectId: "",
-    initialSharedVersion: 0,
+    objectId:
+      "0x3688b783bdd0f04e16e48c48cf9fc4ea537d33f0892b4ee295d174fbc255362c",
+    initialSharedVersion: 343316058,
     mutable: true,
   },
   // BUCKET
@@ -23,11 +25,6 @@ export const SHARED_OBJECTS = {
       "0xbdf91f558c2b61662e5839db600198eda66d502e4c10c4fc5c683f9caca13359",
     initialSharedVersion: 87170268,
     mutable: true,
-  },
-  CLOCK: {
-    objectId: "0x6",
-    initialSharedVersion: 1,
-    mutable: false,
   },
 
   // CETUS
@@ -49,9 +46,11 @@ export const OWNED_OBJECTS = {
   OLA_ST_SBUCK_TREASURY_CAP:
     "0x5a1536b770cb70823c6d6f2e0941acb9672787b404cee5c41e6dc6d4eed19207",
   VAULT_ADMIN_CAP:
-    "0xa6f908d178d44d037e31e05f9fea6d3f941bd36eeade3e49ea65dfca12414fb2",
+    "0x08cddebcda64c4f42360b52b8b15ceb8e6b5b19ffa9e717cb58fe4ae7ebe7784",
+  THIRD_PARTY_CAP:
+    "0xdb276610325ea8666d52545719ef146f12d22899ccde92d4567c49645e928c3f",
   SAVING_VAULT_STRATEGY_CAP:
-    "0xb006b238634aaf3f1edaf25bd20b336552941be61771bdfb2ce13f311ec25d53",
+    "0x399dce526f3431e15b14f24f0fca4a09825cf2f867a120ce1237898e48ac8bb3",
 };
 
 export const DUMMY_ADDRESS =
@@ -68,6 +67,8 @@ export const TARGETS = {
   CALC_REBALANCE_AMOUNTS: `${SAVING_VAULT_PACKAGE_ID}::vault::calc_rebalance_amounts`,
   ST_SBUCK_VAULT_REDEEM_WITHDRAW_TICKET: `${SAVING_VAULT_PACKAGE_ID}::vault::redeem_withdraw_ticket`,
   // SAVING_VAULT_STRATEGY
+  NEW_STRATEGY: `${SAVING_VAULT_PACKAGE_ID}::sbuck_saving_vault::new`,
+  JOIN_VAULT: `${SAVING_VAULT_PACKAGE_ID}::sbuck_saving_vault::join_vault`,
   UNDERLYING_PROFITS: `${SAVING_VAULT_PACKAGE_ID}::sbuck_saving_vault::underlying_profits`,
   SKIM_BASE_PROFITS: `${SAVING_VAULT_PACKAGE_ID}::sbuck_saving_vault::skim_base_profits_v1`,
   TAKE_PROFITS_FOR_SELLING: `${SAVING_VAULT_PACKAGE_ID}::sbuck_saving_vault::take_profits_for_selling`,

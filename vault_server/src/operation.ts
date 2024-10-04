@@ -54,7 +54,34 @@ export function new_vault(
 ): TransactionResult {
   return tx.moveCall({
     target: TARGETS.NEW_VAULT,
+    typeArguments: [COIN_TYPES.BUCK, COIN_TYPES.OLA_ST_SBUCK],
     arguments: [tx.object(treasury_cap)],
+  });
+}
+
+export function new_strategy(
+  tx: Transaction,
+  vault_cap: string,
+): TransactionResult {
+  return tx.moveCall({
+    target: TARGETS.NEW_STRATEGY,
+    arguments: [tx.object(vault_cap)],
+  });
+}
+
+export function join_vault(
+  tx: Transaction,
+  vault_cap: string,
+  strategy_cap: string,
+): TransactionResult {
+  return tx.moveCall({
+    target: TARGETS.JOIN_VAULT,
+    arguments: [
+      tx.object(vault_cap),
+      tx.object(strategy_cap),
+      tx.sharedObjectRef(SHARED_OBJECTS.ST_SBUCK_SAVING_VAULT),
+      tx.sharedObjectRef(SHARED_OBJECTS.SBUCK_SAVING_VAULT_STRATEGY),
+    ],
   });
 }
 
@@ -64,7 +91,7 @@ export function underlyingProfits(tx: Transaction) {
     arguments: [
       tx.sharedObjectRef(SHARED_OBJECTS.SBUCK_SAVING_VAULT_STRATEGY),
       tx.sharedObjectRef(SHARED_OBJECTS.SBUCK_FOUNTAIN),
-      tx.sharedObjectRef(SHARED_OBJECTS.CLOCK),
+      tx.sharedObjectRef(CLOCK_OBJECT),
     ],
   });
 }
@@ -78,7 +105,7 @@ export function skimBaseProfits(tx: Transaction) {
       tx.sharedObjectRef(PROTOCOL_OBJECT),
       tx.sharedObjectRef(SHARED_OBJECTS.SBUCK_FOUNTAIN),
       tx.sharedObjectRef(SHARED_OBJECTS.SBUCK_FLASK),
-      tx.sharedObjectRef(SHARED_OBJECTS.CLOCK),
+      tx.sharedObjectRef(CLOCK_OBJECT),
     ],
   });
 }
@@ -91,7 +118,7 @@ export function takeProfitsForSelling(tx: Transaction): TransactionResult {
       tx.sharedObjectRef(SHARED_OBJECTS.SBUCK_SAVING_VAULT_STRATEGY),
       tx.pure(bcs.option(bcs.U64).serialize(null)),
       tx.sharedObjectRef(SHARED_OBJECTS.SBUCK_FOUNTAIN),
-      tx.sharedObjectRef(SHARED_OBJECTS.CLOCK),
+      tx.sharedObjectRef(CLOCK_OBJECT),
     ],
   });
 }
@@ -107,7 +134,7 @@ export function depositSoldProfits(
       tx.sharedObjectRef(SHARED_OBJECTS.SBUCK_SAVING_VAULT_STRATEGY),
       tx.sharedObjectRef(SHARED_OBJECTS.ST_SBUCK_SAVING_VAULT),
       buckBalance,
-      tx.sharedObjectRef(SHARED_OBJECTS.CLOCK),
+      tx.sharedObjectRef(CLOCK_OBJECT),
     ],
   });
 }
@@ -119,7 +146,7 @@ export function calcRebalanceAmounts(tx: Transaction): TransactionResult {
     typeArguments: [COIN_TYPES.BUCK, COIN_TYPES.OLA_ST_SBUCK],
     arguments: [
       tx.sharedObjectRef(SHARED_OBJECTS.ST_SBUCK_SAVING_VAULT),
-      tx.sharedObjectRef(SHARED_OBJECTS.CLOCK),
+      tx.sharedObjectRef(CLOCK_OBJECT),
     ],
   });
 }
@@ -139,7 +166,7 @@ export function rebalance(
       tx.sharedObjectRef(PROTOCOL_OBJECT),
       tx.sharedObjectRef(SHARED_OBJECTS.SBUCK_FOUNTAIN),
       tx.sharedObjectRef(SHARED_OBJECTS.SBUCK_FLASK),
-      tx.sharedObjectRef(SHARED_OBJECTS.CLOCK),
+      tx.sharedObjectRef(CLOCK_OBJECT),
     ],
   });
 }
@@ -165,7 +192,7 @@ export function cetusSwapSuiToUsdc(
       suiCoinValue,
       tx.pure(bcs.u128().serialize("79226673515401279992447579055")),
       tx.pure(bcs.bool().serialize(false)),
-      tx.sharedObjectRef(SHARED_OBJECTS.CLOCK),
+      tx.sharedObjectRef(CLOCK_OBJECT),
     ],
   });
 

@@ -1,16 +1,17 @@
 import { SuiClient } from "@mysten/sui/client";
 import { Transaction } from "@mysten/sui/transactions";
 import {
+  COINS_TYPE_LIST,
   coinFromBalance,
   coinIntoBalance,
-  COINS_TYPE_LIST,
   getInputCoins,
 } from "bucket-protocol-sdk";
-import { COIN_TYPES } from "lib/const";
 import {
+  bucketPSMSwapForBuck,
   st_buck_saving_vault_deposit,
   st_buck_saving_vault_withdraw,
-} from "operation";
+} from "./operation";
+import { OLA_ST_SBUCK_TYPE } from "@/constants/config";
 
 export async function stBuckSavingVaultDeposit(
   suiClient: SuiClient,
@@ -20,24 +21,29 @@ export async function stBuckSavingVaultDeposit(
 ): Promise<Transaction> {
   const tx = new Transaction();
 
-  const [buckCoin] = await getInputCoins(
+  const [USDCCoin] = await getInputCoins(
     tx as any,
     suiClient as any,
     senderAddress,
-    COINS_TYPE_LIST.BUCK,
+    COINS_TYPE_LIST.USDC,
     buckAmount,
   );
-  const buckBalance = coinIntoBalance(
+  const usdcBalance = coinIntoBalance(
     tx as any,
-    COINS_TYPE_LIST.BUCK,
-    buckCoin,
+    COINS_TYPE_LIST.USDC,
+    USDCCoin,
+  );
+  const [buckBalance] = bucketPSMSwapForBuck(
+    tx,
+    COINS_TYPE_LIST.USDC,
+    usdcBalance,
   );
 
   const [STBUCKBlance] = st_buck_saving_vault_deposit(tx, buckBalance as any);
 
   const STBUCKCoin = coinFromBalance(
     tx as any,
-    COIN_TYPES.OLA_ST_SBUCK,
+    OLA_ST_SBUCK_TYPE,
     STBUCKBlance as any,
   );
 
@@ -56,13 +62,13 @@ export async function stBuckSavingVaultWithdraw(
     tx as any,
     suiClient as any,
     senderAddress,
-    COIN_TYPES.OLA_ST_SBUCK,
+    OLA_ST_SBUCK_TYPE,
     sbuckAmount,
   );
 
   const stsbuckBalance = coinIntoBalance(
     tx as any,
-    COIN_TYPES.OLA_ST_SBUCK,
+    OLA_ST_SBUCK_TYPE,
     stsBUCKCOin,
   );
 

@@ -16,8 +16,17 @@ const vaultServer = new Server(keypair);
 
 (async () => {
   try {
+    // 1. create new vault
+    // await vaultServer.new_vault();
+
+    // 2. create new strategy
+    // await vaultserver.new_strategy();
+
+    // 3. join strategy to vault
+    await vaultServer.join_vault();
+
     // await vaultServer.rebalance();
-    await vaultServer.depositSTSBUCK();
+    // await vaultServer.depositSTSBUCK();
   } catch (error) {
     console.log("error", error);
   }

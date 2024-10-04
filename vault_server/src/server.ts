@@ -7,17 +7,22 @@ import {
   calcRebalanceAmounts,
   cetusSwapSuiToUsdc,
   checkCoinThreshold,
-  coinFromBalance,
-  coinIntoBalance,
   depositSoldProfits,
+  join_vault,
+  new_strategy,
+  new_vault,
   newZeroBalance,
   rebalance,
   skimBaseProfits,
   takeProfitsForSelling,
 } from "./operation";
 import { Transaction } from "@mysten/sui/transactions";
-import { COIN_TYPES, SLIPPAGE } from "./lib/const";
-import { BucketClient } from "bucket-protocol-sdk";
+import { COIN_TYPES, OWNED_OBJECTS, SLIPPAGE } from "./lib/const";
+import {
+  BucketClient,
+  coinFromBalance,
+  coinIntoBalance,
+} from "bucket-protocol-sdk";
 import { stBuckSavingVaultDeposit } from "method";
 
 export class Server {
@@ -27,6 +32,78 @@ export class Server {
   constructor(keypair: Keypair) {
     this.keypair = keypair;
     this.client = new SuiClient({ url: getFullnodeUrl("mainnet") });
+  }
+
+  async new_vault() {
+    const tx = new Transaction();
+    tx.setSender(this.keypair.toSuiAddress());
+
+    new_vault(tx, OWNED_OBJECTS.OLA_ST_SBUCK_TREASURY_CAP);
+
+    const bytes = await tx.build({ client: this.client });
+    const res = await this.client.dryRunTransactionBlock({
+      transactionBlock: bytes,
+    });
+
+    logger.info({ status: res.effects.status });
+
+    if (res.effects.status.status === "success") {
+      const resp = await this.client.signAndExecuteTransaction({
+        transaction: tx,
+        signer: this.keypair,
+      });
+      logger.info({ resp });
+      logger.info("🚀 successful transaction");
+    }
+  }
+
+  async new_strategy() {
+    const tx = new Transaction();
+    tx.setSender(this.keypair.toSuiAddress());
+
+    new_strategy(tx, OWNED_OBJECTS.SAVING_VAULT_STRATEGY_CAP);
+    const bytes = await tx.build({ client: this.client });
+    const res = await this.client.dryRunTransactionBlock({
+      transactionBlock: bytes,
+    });
+
+    logger.info({ status: res.effects.status });
+
+    if (res.effects.status.status === "success") {
+      const resp = await this.client.signAndExecuteTransaction({
+        transaction: tx,
+        signer: this.keypair,
+      });
+      logger.info({ resp });
+      logger.info("🚀 successful transaction");
+    }
+  }
+
+  async join_vault() {
+    const tx = new Transaction();
+    tx.setSender(this.keypair.toSuiAddress());
+
+    join_vault(
+      tx,
+      OWNED_OBJECTS.OLA_ST_SBUCK_TREASURY_CAP,
+      OWNED_OBJECTS.SAVING_VAULT_STRATEGY_CAP,
+    );
+
+    const bytes = await tx.build({ client: this.client });
+    const res = await this.client.dryRunTransactionBlock({
+      transactionBlock: bytes,
+    });
+
+    logger.info({ status: res.effects.status });
+
+    if (res.effects.status.status === "success") {
+      const resp = await this.client.signAndExecuteTransaction({
+        transaction: tx,
+        signer: this.keypair,
+      });
+      logger.info({ resp });
+      logger.info("🚀 successful transaction");
+    }
   }
 
   async rebalance() {
@@ -39,11 +116,15 @@ export class Server {
     if (underlyingProfits > 0) {
       // require to swap underlyingProfits for BUCK
       const suiBalance = takeProfitsForSelling(tx);
-      const suiCoin = coinFromBalance(tx, COIN_TYPES.SUI, suiBalance);
+      const suiCoin = coinFromBalance(
+        tx as any,
+        COIN_TYPES.SUI,
+        suiBalance as any,
+      );
       const usdcCoin = cetusSwapSuiToUsdc(
         tx,
         this.keypair.toSuiAddress(),
-        suiCoin,
+        suiCoin as any,
       );
       const bucketClient = new BucketClient();
       const suiPrice = (await bucketClient.getPrices()).SUI;
@@ -56,11 +137,15 @@ export class Server {
         COIN_TYPES.USDC,
         BigInt(Math.floor(minUSDCAmount)),
       );
-      const usdcBalance = coinIntoBalance(tx, COIN_TYPES.USDC, usdcCoin);
+      const usdcBalance = coinIntoBalance(
+        tx as any,
+        COIN_TYPES.USDC,
+        usdcCoin as any,
+      );
       const buckBalance = bucketPSMSwapForBuck(
         tx,
         COIN_TYPES.USDC,
-        usdcBalance,
+        usdcBalance as any,
       );
 
       // skim accrued fee revenue
