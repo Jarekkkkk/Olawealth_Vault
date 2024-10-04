@@ -1,7 +1,7 @@
 import BasicDataField from "../fields/basicDataField";
 import BasicInputField from "../fields/basicInputField";
 import ActionButton from "../buttons/actionButton";
-import { useContext, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import {
   useAccounts,
   useSignAndExecuteTransaction,
@@ -15,10 +15,19 @@ import {
   stBuckSavingVaultDeposit,
   stBuckSavingVaultWithdraw,
 } from "@/lib/method";
-import { COIN, COINS_TYPE_LIST, COIN_DECIMALS } from "bucket-protocol-sdk";
+import {
+  BucketClient,
+  COIN,
+  COINS_TYPE_LIST,
+  COIN_DECIMALS,
+} from "bucket-protocol-sdk";
 import { OLA_ST_SBUCK_TYPE } from "@/constants/config";
+import { useGetSBUCKFountain } from "@/hooks/useGetSBUCKFountain";
+import { PriceList } from "../../../type";
+import { calculateAutoCompoundAPY } from "@/lib/utils";
 
 const BasicContainer = () => {
+  const [prices, setPrices] = useState<PriceList>();
   const { walletAddress, suiName } = useContext(AppContext);
   const [selectedToken, setSelectedToken] = useState<string>("BUCK");
   const { data: suiBalance } = useSuiClientQuery("getBalance", {
@@ -30,6 +39,7 @@ const BasicContainer = () => {
   const [account] = useAccounts();
   const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
 
+  const fountain = useGetSBUCKFountain(prices?.["SUI"] || 0);
   const [inputValue, setInputValue] = useState("0");
   const userBalance = useMemo(() => {
     if (suiBalance?.totalBalance) {
@@ -42,53 +52,73 @@ const BasicContainer = () => {
     }
   }, [suiBalance]);
 
+  useEffect(() => {
+    const fetchPrice = async () => {
+      try {
+        const bucketClient = new BucketClient();
+        const data = await bucketClient.getPrices();
+        setPrices(data);
+      } catch (error) {
+        console.error("Error fetching price:", error);
+      }
+    };
+    fetchPrice();
+
+    const pricesTimer = setInterval(fetchPrice, 10_000);
+    return () => clearInterval(pricesTimer);
+  }, [setPrices]);
+
   async function handleAction(action: "deposit" | "withdraw") {
-    let tx = new Transaction();
+    try {
+      let tx = new Transaction();
 
-    // PTB part
-    if (action === "deposit") {
-      const value_ = Math.floor(
-        parseFloat(inputValue) * 10 ** COIN_DECIMALS[selectedToken as COIN],
+      // PTB part
+      if (action === "deposit") {
+        const value_ = Math.floor(
+          parseFloat(inputValue) * 10 ** COIN_DECIMALS[selectedToken as COIN],
+        );
+        tx = await stBuckSavingVaultDeposit(client, account.address, value_);
+      } else {
+        const value_ = Math.floor(parseFloat(inputValue) * 10 ** 9);
+        tx = await stBuckSavingVaultWithdraw(client, account.address, value_);
+      }
+
+      // Dry run
+      tx.setSender(account.address);
+      const dryRunRes = await client.dryRunTransactionBlock({
+        transactionBlock: await tx.build({ client }),
+      });
+      console.log("res", dryRunRes);
+      if (dryRunRes.effects.status.status === "failure") {
+        toast.error(dryRunRes.effects.status.error);
+        return;
+      }
+
+      // Execute
+      signAndExecuteTransaction(
+        {
+          transaction: tx,
+        },
+        {
+          onSuccess: async (txRes) => {
+            const finalRes = await client.waitForTransaction({
+              digest: txRes.digest,
+              options: {
+                showEffects: true,
+              },
+            });
+            toast.success("Tx Success!");
+            console.log(finalRes);
+          },
+          onError: (err) => {
+            toast.error(err.message);
+            console.log(err);
+          },
+        },
       );
-      tx = await stBuckSavingVaultDeposit(client, account.address, value_);
-    } else {
-      const value_ = Math.floor(parseFloat(inputValue) * 10 ** 9);
-      tx = await stBuckSavingVaultWithdraw(client, account.address, value_);
+    } catch (err) {
+      console.error(err);
     }
-
-    // Dry run
-    tx.setSender(account.address);
-    const dryRunRes = await client.dryRunTransactionBlock({
-      transactionBlock: await tx.build({ client }),
-    });
-    console.log("res", dryRunRes);
-    if (dryRunRes.effects.status.status === "failure") {
-      toast.error(dryRunRes.effects.status.error);
-      return;
-    }
-
-    // Execute
-    signAndExecuteTransaction(
-      {
-        transaction: tx,
-      },
-      {
-        onSuccess: async (txRes) => {
-          const finalRes = await client.waitForTransaction({
-            digest: txRes.digest,
-            options: {
-              showEffects: true,
-            },
-          });
-          toast.success("Tx Success!");
-          console.log(finalRes);
-        },
-        onError: (err) => {
-          toast.error(err.message);
-          console.log(err);
-        },
-      },
-    );
   }
 
   return (
@@ -98,6 +128,13 @@ const BasicContainer = () => {
         value={userBalance ?? "0.0000"}
         spaceWithUnit
         unit={selectedToken}
+        minFractionDigits={0}
+      />
+      <BasicDataField
+        label="APR"
+        value={calculateAutoCompoundAPY(fountain?.apr ? fountain.apr + 4 : 0)}
+        spaceWithUnit
+        unit={"%"}
         minFractionDigits={0}
       />
       <BasicInputField

@@ -13,8 +13,12 @@ import {
   new_vault,
   newZeroBalance,
   rebalance,
+  setPerformanceFeeBps,
+  setWithdrawFeeBps,
   skimBaseProfits,
   takeProfitsForSelling,
+  withdrawPerformanceFee,
+  withdrawWithdrawFee,
 } from "./operation";
 import { Transaction } from "@mysten/sui/transactions";
 import { COIN_TYPES, OWNED_OBJECTS, SLIPPAGE } from "./lib/const";
@@ -180,12 +184,66 @@ export class Server {
     }
   }
 
-  async depositSTSBUCK() {
-    const sender = this.keypair.toSuiAddress();
+  async set_performance_fee() {
+    const tx = new Transaction();
+    tx.setSender(this.keypair.toSuiAddress());
 
-    const tx = await stBuckSavingVaultDeposit(this.client, sender, 10 ** 9);
+    setPerformanceFeeBps(tx, BigInt(1000));
 
-    tx.setSender(sender);
+    const bytes = await tx.build({ client: this.client });
+    const res = await this.client.dryRunTransactionBlock({
+      transactionBlock: bytes,
+    });
+
+    logger.info({ status: res.effects.status });
+  }
+
+  async set_withdraw_fee() {
+    const tx = new Transaction();
+    tx.setSender(this.keypair.toSuiAddress());
+
+    setWithdrawFeeBps(tx, BigInt(3));
+
+    const bytes = await tx.build({ client: this.client });
+    const res = await this.client.dryRunTransactionBlock({
+      transactionBlock: bytes,
+    });
+
+    logger.info({ status: res.effects.status });
+  }
+
+  async withdraw_performance_fee() {
+    const tx = new Transaction();
+    tx.setSender(this.keypair.toSuiAddress());
+
+    const lpBalance = withdrawPerformanceFee(tx, BigInt(1));
+    const lpCoin = coinFromBalance(
+      tx as any,
+      COIN_TYPES.OLA_ST_SBUCK,
+      lpBalance as any,
+    );
+    tx.transferObjects([lpCoin as any], this.keypair.toSuiAddress());
+
+    const bytes = await tx.build({ client: this.client });
+    const res = await this.client.dryRunTransactionBlock({
+      transactionBlock: bytes,
+    });
+
+    logger.info({ status: res.effects.status });
+  }
+
+  async withdraw_withdraw_fee() {
+    const tx = new Transaction();
+    tx.setSender(this.keypair.toSuiAddress());
+
+    const buckBalance = withdrawWithdrawFee(tx, BigInt(1));
+    const buckCoin = coinFromBalance(
+      tx as any,
+      COIN_TYPES.BUCK,
+      buckBalance as any,
+    );
+    tx.transferObjects([buckCoin as any], this.keypair.toSuiAddress());
+
     const bytes = await tx.build({ client: this.client });
     const res = await this.client.dryRunTransactionBlock({
       transactionBlock: bytes,

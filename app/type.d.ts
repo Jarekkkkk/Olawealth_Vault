@@ -1,4 +1,5 @@
 //Type
+export type PriceList = { [key: string]: number };
 type RpcNode = {
   name: string;
   url: string;

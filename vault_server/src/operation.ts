@@ -277,3 +277,56 @@ export function st_buck_saving_vault_withdraw(
 
   return buckBalance;
 }
+
+export function setPerformanceFeeBps(tx: Transaction, feeBps: bigint) {
+  tx.moveCall({
+    target: TARGETS.SET_PERFROMANCE_FEE_BPS,
+    typeArguments: [COINS_TYPE_LIST.BUCK, COIN_TYPES.OLA_ST_SBUCK],
+    arguments: [
+      tx.object(OWNED_OBJECTS.VAULT_ADMIN_CAP),
+      tx.sharedObjectRef(SHARED_OBJECTS.ST_SBUCK_SAVING_VAULT),
+      tx.pure.u64(feeBps),
+    ],
+  });
+}
+
+export function setWithdrawFeeBps(tx: Transaction, feeBps: bigint) {
+  tx.moveCall({
+    target: TARGETS.SET_WITHDRAW_FEE_BPS,
+    typeArguments: [COINS_TYPE_LIST.BUCK, COIN_TYPES.OLA_ST_SBUCK],
+    arguments: [
+      tx.object(OWNED_OBJECTS.VAULT_ADMIN_CAP),
+      tx.sharedObjectRef(SHARED_OBJECTS.ST_SBUCK_SAVING_VAULT),
+      tx.pure.u64(feeBps),
+    ],
+  });
+}
+
+export function withdrawPerformanceFee(
+  tx: Transaction,
+  amount: bigint,
+): TransactionResult {
+  return tx.moveCall({
+    target: TARGETS.WITHDRAW_PERFORMANCE_FEE,
+    typeArguments: [COINS_TYPE_LIST.BUCK, COIN_TYPES.OLA_ST_SBUCK],
+    arguments: [
+      tx.object(OWNED_OBJECTS.VAULT_ADMIN_CAP),
+      tx.sharedObjectRef(SHARED_OBJECTS.ST_SBUCK_SAVING_VAULT),
+      tx.pure.u64(amount),
+    ],
+  });
+}
+export function withdrawWithdrawFee(
+  tx: Transaction,
+  amount: bigint,
+): TransactionResult {
+  return tx.moveCall({
+    target: TARGETS.WITHDRAW_WITHDRAW_FEE,
+    typeArguments: [COINS_TYPE_LIST.BUCK, COIN_TYPES.OLA_ST_SBUCK],
+    arguments: [
+      tx.object(OWNED_OBJECTS.VAULT_ADMIN_CAP),
+      tx.sharedObjectRef(SHARED_OBJECTS.ST_SBUCK_SAVING_VAULT),
+      tx.pure.u64(amount),
+    ],
+  });
+}

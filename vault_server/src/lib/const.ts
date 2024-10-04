@@ -66,16 +66,20 @@ export const TARGETS = {
   ST_SBUCK_VAULT_WITHDRAW_TICKET: `${SAVING_VAULT_PACKAGE_ID}::vault::redeem_withdraw_ticket`,
   CALC_REBALANCE_AMOUNTS: `${SAVING_VAULT_PACKAGE_ID}::vault::calc_rebalance_amounts`,
   ST_SBUCK_VAULT_REDEEM_WITHDRAW_TICKET: `${SAVING_VAULT_PACKAGE_ID}::vault::redeem_withdraw_ticket`,
+  SET_PERFROMANCE_FEE_BPS: `${SAVING_VAULT_PACKAGE_ID}::vault::set_performance_fee_bps`,
+  SET_WITHDRAW_FEE_BPS: `${SAVING_VAULT_PACKAGE_ID}::vault::set_withdraw_fee_bps`,
+  WITHDRAW_PERFORMANCE_FEE: `${SAVING_VAULT_PACKAGE_ID}::vault::withdraw_performance_fee`,
+  WITHDRAW_WITHDRAW_FEE: `${SAVING_VAULT_PACKAGE_ID}::vault::withdraw_withdraw_fee`,
   // SAVING_VAULT_STRATEGY
   NEW_STRATEGY: `${SAVING_VAULT_PACKAGE_ID}::sbuck_saving_vault::new`,
   JOIN_VAULT: `${SAVING_VAULT_PACKAGE_ID}::sbuck_saving_vault::join_vault`,
   UNDERLYING_PROFITS: `${SAVING_VAULT_PACKAGE_ID}::sbuck_saving_vault::underlying_profits`,
-  SKIM_BASE_PROFITS: `${SAVING_VAULT_PACKAGE_ID}::sbuck_saving_vault::skim_base_profits_v1`,
+  SKIM_BASE_PROFITS: `${SAVING_VAULT_PACKAGE_ID}::sbuck_saving_vault::skim_base_profits`,
   TAKE_PROFITS_FOR_SELLING: `${SAVING_VAULT_PACKAGE_ID}::sbuck_saving_vault::take_profits_for_selling`,
   DEPOSIT_SOLD_PROFITS: `${SAVING_VAULT_PACKAGE_ID}::sbuck_saving_vault::deposit_sold_profits`,
-  REBALANCE: `${SAVING_VAULT_PACKAGE_ID}::sbuck_saving_vault::rebalance_v1`,
+  REBALANCE: `${SAVING_VAULT_PACKAGE_ID}::sbuck_saving_vault::rebalance`,
   ST_SBUCK_VAULT_DEPOSIT: `${SAVING_VAULT_PACKAGE_ID}::sbuck_saving_vault::deposit`,
-  ST_SBUCK_SAVING_VAULT_WITHDRAW: `${SAVING_VAULT_PACKAGE_ID}::sbuck_saving_vault::withdraw_v1`,
+  ST_SBUCK_SAVING_VAULT_WITHDRAW: `${SAVING_VAULT_PACKAGE_ID}::sbuck_saving_vault::withdraw`,
 
   // CETUS
   CETUS_SWAP:
@@ -94,46 +98,3 @@ export const COIN_TYPES = {
   SUI: "0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI",
   USDC: "0x5d4b302506645c37ff133b98c4b50a5ae14841659738d6d733d59d0d217a93bf::coin::COIN",
 };
-
-// export const STRATER_CONFIG = {
-//   // ST_SBUCK
-//   ST_SBUCK_COIN_TYPE:
-//     "0xd01d27939064d79e4ae1179cd11cfeeff23943f32b1a842ea1a1e15a0045d77d::st_sbuck::ST_SBUCK",
-//   ST_SBUCK_DECIMALS: 9,
-//   objects: {
-//     ST_SBUCK_SAVING_VAULT: {
-//       objectId:
-//         "0xe83e455a9e99884c086c8c79c13367e7a865de1f953e75bcf3e529cdf03c6224",
-//       initialSharedVersion: 261896418,
-//       mutable: true,
-//     },
-//     SBUCK_SAVING_VAULT_STRATEGY: {
-//       objectId:
-//         "0x55bb4f6737d9a299cae4da7687dcf0ab4f56494dfe6ec1189a388b6018d0c2a8",
-//       initialSharedVersion: 261896419,
-//       mutable: true,
-//     },
-//     SBUCK_FLASK: {
-//       objectId:
-//         "0xc6ecc9731e15d182bc0a46ebe1754a779a4bfb165c201102ad51a36838a1a7b8",
-//       initialSharedVersion: 90706194,
-//       mutable: true,
-//     },
-//     SBUCK_FOUNTAIN: {
-//       objectId:
-//         "0xbdf91f558c2b61662e5839db600198eda66d502e4c10c4fc5c683f9caca13359",
-//       initialSharedVersion: 87170268,
-//       mutable: true,
-//     },
-//   },
-//   targets: {
-//     stBUCKSavingVaultDeposit:
-//       "0x75fe358d87679b30befc498a8dae1d28ca9eed159ab6f2129a654a8255e5610e::sbuck_saving_vault::deposit",
-//     buckstSBUCKVaultWithdraw:
-//       "0x2a721777dc1fcf7cda19492ad7c2272ee284214652bde3e9740e2f49c3bff457::vault::withdraw",
-//     buckstSBUCKVaultRedeemWithdrawTicket:
-//       "0x2a721777dc1fcf7cda19492ad7c2272ee284214652bde3e9740e2f49c3bff457::vault::redeem_withdraw_ticket",
-//     stBUCKSavingStrategyWithdrawV1:
-//       "0x75fe358d87679b30befc498a8dae1d28ca9eed159ab6f2129a654a8255e5610e::sbuck_saving_vault::withdraw_v1",
-//   },
-// };
