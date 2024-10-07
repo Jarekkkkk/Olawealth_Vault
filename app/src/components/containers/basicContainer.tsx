@@ -25,6 +25,7 @@ import { OLA_ST_SBUCK_TYPE } from "@/constants/config";
 import { useGetSBUCKFountain } from "@/hooks/useGetSBUCKFountain";
 import { PriceList } from "../../../type";
 import { calculateAutoCompoundAPY } from "@/lib/utils";
+import { useGetBuckStSBUCKVault } from "@/hooks/useGetBuckStSBUCKVault";
 
 const BasicContainer = () => {
   const [prices, setPrices] = useState<PriceList>();
@@ -51,6 +52,27 @@ const BasicContainer = () => {
       return 0;
     }
   }, [suiBalance]);
+
+  const { data: buckStSBUCKVault } = useGetBuckStSBUCKVault();
+  const { totalValueLocked, buckToSBUCKPrice } = useMemo(() => {
+    if (!buckStSBUCKVault) return { totalValueLocked: 0, buckToSBUCKPrice: 0 };
+    let totalAvailableBalance =
+      buckStSBUCKVault.free_balance +
+      buckStSBUCKVault.unlocked_balance +
+      buckStSBUCKVault.locked_balance;
+
+    for (const str in buckStSBUCKVault.strategies) {
+      totalAvailableBalance += buckStSBUCKVault.strategies[str];
+    }
+
+    if (totalAvailableBalance == 0)
+      return { totalValueLocked: 0, buckToSBUCKPrice: 0 };
+
+    return {
+      totalValueLocked: totalAvailableBalance,
+      buckToSBUCKPrice: buckStSBUCKVault.lp_treasury / totalAvailableBalance,
+    };
+  }, [buckStSBUCKVault]);
 
   useEffect(() => {
     const fetchPrice = async () => {
@@ -130,13 +152,21 @@ const BasicContainer = () => {
         unit={selectedToken}
         minFractionDigits={0}
       />
-      <BasicDataField
-        label="APR"
-        value={calculateAutoCompoundAPY(fountain?.apr ? fountain.apr + 4 : 0)}
-        spaceWithUnit
-        unit={"%"}
-        minFractionDigits={0}
-      />
+      <div className="flex gap-4 items-center">
+        <BasicDataField
+          label="APR"
+          value={calculateAutoCompoundAPY(fountain?.apr ? fountain.apr + 4 : 0)}
+          spaceWithUnit
+          unit={"%"}
+          minFractionDigits={0}
+        />
+        <BasicDataField
+          label="TVL"
+          value={totalValueLocked / 10 ** 9}
+          spaceWithUnit
+          minFractionDigits={0}
+        />
+      </div>
       <BasicInputField
         label="Input"
         inputValue={inputValue}

@@ -34,3 +34,11 @@ export const calculateAutoCompoundAPY = (apr: number) => {
   const apy = (1 + apr / 100 / n) ** n - 1;
   return apy * 100;
 };
+
+export function extractGenericType(type: string): string {
+  const regex = /<([^>]+)>/;
+
+  const match = type.match(regex);
+
+  return match ? match[1] : "";
+}
