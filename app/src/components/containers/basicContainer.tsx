@@ -166,6 +166,12 @@ const BasicContainer = () => {
           spaceWithUnit
           minFractionDigits={0}
         />
+        <BasicDataField
+          label="Price"
+          value={buckToSBUCKPrice}
+          spaceWithUnit
+          minFractionDigits={0}
+        />
       </div>
       <BasicInputField
         label="Input"
