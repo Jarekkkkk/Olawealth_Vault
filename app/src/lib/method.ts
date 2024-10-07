@@ -34,12 +34,14 @@ export async function stBuckSavingVaultDeposit(
     COINS_TYPE_LIST.USDC,
     USDCCoin,
   );
+  // PSM
   const [buckBalance] = bucketPSMSwapForBuck(
     tx,
     COINS_TYPE_LIST.USDC,
     usdcBalance,
   );
 
+  // stake BUCK to vault
   const [STBUCKBlance] = st_buck_saving_vault_deposit(tx, buckBalance as any);
 
   const STBUCKCoin = coinFromBalance(

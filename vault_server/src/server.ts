@@ -89,15 +89,15 @@ export class Server {
 
     join_vault(
       tx,
-      OWNED_OBJECTS.OLA_ST_SBUCK_TREASURY_CAP,
+      OWNED_OBJECTS.VAULT_ADMIN_CAP,
       OWNED_OBJECTS.SAVING_VAULT_STRATEGY_CAP,
     );
 
+    logger.info({ Transaction: tx.blockData.transactions });
     const bytes = await tx.build({ client: this.client });
     const res = await this.client.dryRunTransactionBlock({
       transactionBlock: bytes,
     });
-
     logger.info({ status: res.effects.status });
 
     if (res.effects.status.status === "success") {
@@ -135,6 +135,7 @@ export class Server {
       const minUSDCAmount =
         underlyingProfits * suiPrice * (1 - SLIPPAGE) * 10 ** (6 - 9);
 
+      // slippage constraint
       checkCoinThreshold(
         tx,
         usdcCoin,
@@ -146,13 +147,14 @@ export class Server {
         COIN_TYPES.USDC,
         usdcCoin as any,
       );
+      // Swap USDC for BUCK ( PSM )
       const buckBalance = bucketPSMSwapForBuck(
         tx,
         COIN_TYPES.USDC,
         usdcBalance as any,
       );
 
-      // skim accrued fee revenue
+      // skim accrued fee revenue ( claim Bucket 4% interest rate)
       skimBaseProfits(tx);
       depositSoldProfits(tx, buckBalance);
       const rebalanceAmounts = calcRebalanceAmounts(tx);
@@ -184,11 +186,12 @@ export class Server {
     }
   }
 
+  //. rebalance Fee
   async set_performance_fee() {
     const tx = new Transaction();
     tx.setSender(this.keypair.toSuiAddress());
 
-    setPerformanceFeeBps(tx, BigInt(1000));
+    setPerformanceFeeBps(tx, BigInt(1000)); // 10%
 
     const bytes = await tx.build({ client: this.client });
     const res = await this.client.dryRunTransactionBlock({
@@ -198,6 +201,7 @@ export class Server {
     logger.info({ status: res.effects.status });
   }
 
+  // withdraw fee
   async set_withdraw_fee() {
     const tx = new Transaction();
     tx.setSender(this.keypair.toSuiAddress());
@@ -216,7 +220,7 @@ export class Server {
     const tx = new Transaction();
     tx.setSender(this.keypair.toSuiAddress());
 
-    const lpBalance = withdrawPerformanceFee(tx, BigInt(1));
+    const lpBalance = withdrawPerformanceFee(tx, BigInt(400));
     const lpCoin = coinFromBalance(
       tx as any,
       COIN_TYPES.OLA_ST_SBUCK,

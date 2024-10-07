@@ -73,8 +73,8 @@ export function join_vault(
   tx: Transaction,
   vault_cap: string,
   strategy_cap: string,
-): TransactionResult {
-  return tx.moveCall({
+) {
+  tx.moveCall({
     target: TARGETS.JOIN_VAULT,
     arguments: [
       tx.object(vault_cap),

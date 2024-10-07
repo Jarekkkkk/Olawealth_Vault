@@ -68,17 +68,20 @@ const BasicContainer = () => {
     return () => clearInterval(pricesTimer);
   }, [setPrices]);
 
+  // Transaction
   async function handleAction(action: "deposit" | "withdraw") {
     try {
       let tx = new Transaction();
 
       // PTB part
+      // Deposity
       if (action === "deposit") {
         const value_ = Math.floor(
           parseFloat(inputValue) * 10 ** COIN_DECIMALS[selectedToken as COIN],
         );
         tx = await stBuckSavingVaultDeposit(client, account.address, value_);
       } else {
+        // withdraw
         const value_ = Math.floor(parseFloat(inputValue) * 10 ** 9);
         tx = await stBuckSavingVaultWithdraw(client, account.address, value_);
       }
