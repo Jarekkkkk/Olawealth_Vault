@@ -19,7 +19,7 @@ const vaultServer = new Server(keypair);
     // 1. create new vault
     // await vaultServer.new_vault();
     // 2. create new strategy
-    // await vaultserver.new_strategy();
+    // await vaultServer.new_strategy();
     // 3. join strategy to vault
     // await vaultServer.join_vault();
     // 4. cron job: rebalance
@@ -28,12 +28,13 @@ const vaultServer = new Server(keypair);
     // await vaultServer.set_performance_fee();
     // await vaultServer.set_withdraw_fee();
     // await vaultServer.withdraw_performance_fee();
-    // await vaultServer.withdraw_performance_fee();
+    // await vaultServer.withdraw_withdraw_fee();
   } catch (error) {
     console.log("error", error);
   }
 })();
 
+// Execute every hour
 // const job = new CronJob("0 0 */1 * * *", async function () {
 //   try {
 //     await vaultServer.rebalance();

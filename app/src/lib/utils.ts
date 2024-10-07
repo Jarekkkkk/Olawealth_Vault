@@ -12,6 +12,7 @@ export function calculateRewardAmount(
 ) {
   return (flowAmount / 10 ** 9 / flowInterval) * 86400000;
 }
+
 export function calculateFountainAPR(
   fountain: FountainInfo,
   rewardsPrice: number,
@@ -27,6 +28,7 @@ export function calculateFountainAPR(
     100
   );
 }
+
 export const calculateAutoCompoundAPY = (apr: number) => {
   if (apr === 0) return 0;
   // auto-compound every hour

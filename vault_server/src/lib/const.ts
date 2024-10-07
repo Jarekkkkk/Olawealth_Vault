@@ -3,14 +3,14 @@ export const SLIPPAGE = 0.005;
 export const SHARED_OBJECTS = {
   ST_SBUCK_SAVING_VAULT: {
     objectId:
-      "0xb3238f6dfc2f59351d466e885f7ec5e0c09219caa44cc3815504e23e5a24d480",
-    initialSharedVersion: 343316057,
+      "0xa335335bb6431c45910dbe5e4e2a80f2eafd21ab8e223dc62d226bbb9746d269",
+    initialSharedVersion: 357683086,
     mutable: true,
   },
   SBUCK_SAVING_VAULT_STRATEGY: {
     objectId:
-      "0x3688b783bdd0f04e16e48c48cf9fc4ea537d33f0892b4ee295d174fbc255362c",
-    initialSharedVersion: 343316058,
+      "0x4ea8636c2ce349bec8e84ebb943bd78d4f5dbea65c32f5f03c134d532a1afed9",
+    initialSharedVersion: 357683087,
     mutable: true,
   },
   // BUCKET
@@ -44,20 +44,20 @@ export const SHARED_OBJECTS = {
 
 export const OWNED_OBJECTS = {
   OLA_ST_SBUCK_TREASURY_CAP:
-    "0x5a1536b770cb70823c6d6f2e0941acb9672787b404cee5c41e6dc6d4eed19207",
+    "0x593f1a1ddf337d9e3f2d051abe969518295f151835c9fd2f65c7401d50445ef3",
   VAULT_ADMIN_CAP:
-    "0x08cddebcda64c4f42360b52b8b15ceb8e6b5b19ffa9e717cb58fe4ae7ebe7784",
+    "0x24e69ea20c7ad3426875c3f0d5a3efd3d38fbe06f7a2ca97d405a6817d5722d5",
   THIRD_PARTY_CAP:
-    "0xdb276610325ea8666d52545719ef146f12d22899ccde92d4567c49645e928c3f",
+    "0x153b77b9b61d07598d0502bd364b9c25891ff79fac8925b08c6494a1b3707cf9",
   SAVING_VAULT_STRATEGY_CAP:
-    "0x399dce526f3431e15b14f24f0fca4a09825cf2f867a120ce1237898e48ac8bb3",
+    "0xc25445286d6de486a80cfd5b275c1ae706b785129a0f815b6a118869437ee6bb",
 };
 
 export const DUMMY_ADDRESS =
   "0x0c434f35a9b9a569e4f6476b6d1dafcc767de25f3d143e864e8ce319df85d052";
 
 const SAVING_VAULT_PACKAGE_ID =
-  "0x1d3f453d102d5580b23c53256f7bc408854555c400d9df7a2874025914c7a587";
+  "0xabae3cfeed5e54d6ae3ecd4209d3582833e4153fba658d8c8e0d8a1aba79dcfa";
 
 export const TARGETS = {
   // SAVING_VAULT
@@ -94,7 +94,7 @@ export const TARGETS = {
 export const COIN_TYPES = {
   BUCK: "0xce7ff77a83ea0cb6fd39bd8748e2ec89a3f41e8efdc3f4eb123e0ca37b184db2::buck::BUCK",
   OLA_ST_SBUCK:
-    "0xcc93039d86ebb5fdf6818267a569c6b155c5bd64333949b91e4c796cc90018bb::ola_st_sbuck::OLA_ST_SBUCK",
+    "0x61c2af08ff06cc8be36a4f7eb0d47a5da40fabd2875d6175aabe364394ce36b2::ola_st_sbuck::OLA_ST_SBUCK",
   SUI: "0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI",
   USDC: "0x5d4b302506645c37ff133b98c4b50a5ae14841659738d6d733d59d0d217a93bf::coin::COIN",
 };
