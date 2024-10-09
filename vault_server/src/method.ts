@@ -70,6 +70,22 @@ export async function stBuckSavingVaultWithdraw(
     tx,
     stsbuckBalance as any,
   );
+
+  const res = (await suiClient.devInspectTransactionBlock({
+    sender: senderAddress,
+    transactionBlock: tx,
+  })) as any;
+
+  if (!res?.balanceChanges) throw new Error("Tx fail");
+
+  // const coinInAmount = res.balanceChanges.find(
+  //   (bal: any) =>
+  //     bal.coinType ==
+  //       "0xce7ff77a83ea0cb6fd39bd8748e2ec89a3f41e8efdc3f4eb123e0ca37b184db2::buck::BUCK" &&
+  //     bal.owner.AddressOwner == senderAddress,
+  // );
+
+  console.log("dev+res", res);
   const buckCoin = coinFromBalance(
     tx as any,
     COINS_TYPE_LIST.BUCK,

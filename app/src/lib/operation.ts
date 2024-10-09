@@ -9,11 +9,13 @@ import {
   TransactionArgument,
   TransactionResult,
 } from "@mysten/sui/transactions";
+import { Router, RouterCompleteTradeRoute } from "aftermath-ts-sdk";
 import {
   CLOCK_OBJECT,
   COINS_TYPE_LIST,
   PROTOCOL_OBJECT,
 } from "bucket-protocol-sdk";
+import { Input } from "postcss";
 
 export function st_buck_saving_vault_deposit(
   tx: Transaction,
@@ -128,4 +130,73 @@ export function cetusSwapBuckToUsdc(
 
   tx.transferObjects([buckOutCoin], senderAddress);
   return usdcOutCoin;
+}
+
+// Aftermath Router
+export async function simulateAftermathRouteGivenAmountIn(
+  router: Router,
+  inputs: {
+    senderAddress: string;
+    coinInType: string;
+    coinOutType: string;
+    coinInAmount: bigint;
+  },
+) {
+  const { coinInType, coinOutType, coinInAmount } = inputs;
+  return router.getCompleteTradeRouteGivenAmountIn({
+    coinInType,
+    coinOutType,
+    coinInAmount,
+    // optional
+    // referrer: "0x73c88d432ad4b2bfc5170148faae6f11f39550fb84f9b83c8d152dd89bc8eda3",
+    // externalFee: {
+    //   recipient: "0x73c88d432ad4b2bfc5170148faae6f11f39550fb84f9b83c8d152dd89bc8eda3",
+    //   feePercentage: 0.001, // 0.1% fee from amount out
+    // },
+  });
+}
+
+export async function executeaftermathSwap(
+  tx: Transaction,
+  router: Router,
+  route: RouterCompleteTradeRoute,
+  inputs: {
+    senderAddress: string;
+    coinIn: TransactionArgument;
+    slippage: number;
+  },
+) {
+  const { coinOutId, tx: newTx } =
+    await router.addTransactionForCompleteTradeRoute({
+      tx,
+      walletAddress: inputs.senderAddress,
+      completeRoute: route,
+      slippage: inputs.slippage,
+      coinInId: inputs.coinIn,
+    });
+
+  if (!coinOutId) throw new Error("Fail to swap Coin");
+
+  return { outputCoin: coinOutId, newTx };
+}
+
+export async function aftermathSwapByInput(
+  tx: Transaction,
+  router: Router,
+  inputs: {
+    senderAddress: string;
+    coinInType: string;
+    coinOutType: string;
+    coinInAmount: bigint;
+    coinIn: TransactionArgument;
+    slippage: number;
+  },
+) {
+  const route = await simulateAftermathRouteGivenAmountIn(router, inputs);
+  console.log("route", route);
+  return await executeaftermathSwap(tx, router, route, {
+    senderAddress: inputs.senderAddress,
+    coinIn: inputs.coinIn,
+    slippage: inputs.slippage,
+  });
 }

@@ -16,6 +16,7 @@ const vaultServer = new Server(keypair);
 
 (async () => {
   try {
+    await vaultServer.swap();
     // 1. create new vault
     // await vaultServer.new_vault();
     // 2. create new strategy

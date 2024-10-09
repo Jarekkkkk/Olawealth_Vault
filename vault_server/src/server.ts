@@ -20,14 +20,21 @@ import {
   withdrawPerformanceFee,
   withdrawWithdrawFee,
 } from "./operation";
-import { Transaction } from "@mysten/sui/transactions";
+import {
+  Transaction,
+  TransactionObjectArgument,
+} from "@mysten/sui/transactions";
 import { COIN_TYPES, OWNED_OBJECTS, SLIPPAGE } from "./lib/const";
 import {
   BucketClient,
   coinFromBalance,
   coinIntoBalance,
+  COINS_TYPE_LIST,
+  getInputCoins,
 } from "bucket-protocol-sdk";
 import { stBuckSavingVaultDeposit } from "method";
+import { flowXSwapByInput } from "router";
+import { Aftermath } from "aftermath-ts-sdk";
 
 export class Server {
   private keypair: Keypair;
@@ -110,6 +117,58 @@ export class Server {
     }
   }
 
+  async swap() {
+    let tx = new Transaction();
+    tx.setSender(this.keypair.toSuiAddress());
+
+    const coinInAmount = BigInt(0.01 * 10 ** 9);
+
+    const [buckCoin] = await getInputCoins(
+      tx as any,
+      this.client as any,
+      this.keypair.toSuiAddress(),
+      COINS_TYPE_LIST.BUCK,
+      Number(coinInAmount),
+    );
+
+    // FlowX
+    // let usdcCoin = await flowXSwapByInput(tx, this.client, {
+    //   coinInType: COIN_TYPES.BUCK,
+    //   coinOutType: COIN_TYPES.USDC,
+    //   amountIn: coinInAmount,
+    //   coinIn: buckCoin as any,
+    // });
+
+    // Aftermath route
+    const afSdk = new Aftermath("MAINNET");
+    await afSdk.init();
+    const router = afSdk.Router();
+
+    const route = await router.getCompleteTradeRouteGivenAmountIn({
+      coinInType: COIN_TYPES.BUCK,
+      coinOutType: COIN_TYPES.USDC,
+      coinInAmount: coinInAmount,
+    });
+    const { coinOutId: usdcCoin, tx: newTx } =
+      await router.addTransactionForCompleteTradeRoute({
+        tx,
+        walletAddress: this.keypair.toSuiAddress(),
+        completeRoute: route,
+        slippage: 0.003, // 0.3%
+        coinInId: buckCoin,
+      });
+
+    tx = newTx;
+    tx.transferObjects([usdcCoin as any], this.keypair.toSuiAddress());
+
+    const bytes = await tx.build({ client: this.client });
+    const res = await this.client.dryRunTransactionBlock({
+      transactionBlock: bytes,
+    });
+
+    logger.info({ res: res.effects.status.status });
+  }
+
   async rebalance() {
     const tx = new Transaction();
 
@@ -130,6 +189,7 @@ export class Server {
         this.keypair.toSuiAddress(),
         suiCoin as any,
       );
+
       const bucketClient = new BucketClient();
       const suiPrice = (await bucketClient.getPrices()).SUI;
       const minUSDCAmount =
