@@ -276,7 +276,7 @@ export class Server {
     const tx = new Transaction();
     tx.setSender(this.keypair.toSuiAddress());
 
-    const lpBalance = withdrawPerformanceFee(tx, BigInt(1));
+    const lpBalance = withdrawPerformanceFee(tx, BigInt(1827980));
     const lpCoin = coinFromBalance(
       tx as any,
       COIN_TYPES.OLA_ST_SBUCK,
@@ -296,7 +296,7 @@ export class Server {
     const tx = new Transaction();
     tx.setSender(this.keypair.toSuiAddress());
 
-    const buckBalance = withdrawWithdrawFee(tx, BigInt(1));
+    const buckBalance = withdrawWithdrawFee(tx, BigInt(3793932));
     const buckCoin = coinFromBalance(
       tx as any,
       COIN_TYPES.BUCK,

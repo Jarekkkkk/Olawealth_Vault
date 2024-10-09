@@ -16,7 +16,7 @@ const vaultServer = new Server(keypair);
 
 (async () => {
   try {
-    await vaultServer.swap();
+    // await vaultServer.swap();
     // 1. create new vault
     // await vaultServer.new_vault();
     // 2. create new strategy
@@ -28,8 +28,11 @@ const vaultServer = new Server(keypair);
     // admin functions
     // await vaultServer.set_performance_fee();
     // await vaultServer.set_withdraw_fee();
-    // await vaultServer.withdraw_performance_fee();
-    // await vaultServer.withdraw_performance_fee();
+
+    // LP token
+    await vaultServer.withdraw_performance_fee();
+    //. BUCK
+    await vaultServer.withdraw_withdraw_fee();
   } catch (error) {
     console.log("error", error);
   }
