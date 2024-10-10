@@ -155,7 +155,7 @@ const BasicContainer = () => {
       <div className="flex gap-4 items-center">
         <BasicDataField
           label="APR"
-          value={calculateAutoCompoundAPY(fountain?.apr ? fountain.apr + 4 : 0)}
+          value={calculateAutoCompoundAPY(fountain?.apr ? fountain.apr + 1 : 0)}
           spaceWithUnit
           unit={"%"}
           minFractionDigits={0}
