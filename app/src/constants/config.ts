@@ -1,18 +1,18 @@
 export type MoveCallTarget = `${string}::${string}::${string}`;
 
 export const OLA_ST_SBUCK_TYPE =
-  "0x61c2af08ff06cc8be36a4f7eb0d47a5da40fabd2875d6175aabe364394ce36b2::ola_st_sbuck::OLA_ST_SBUCK";
+  "0xc49b92938b1a9f190267d8c2afb2b5943a39e709d83e388c2c1f3b4325be2167::ola_st_sbuck::OLA_ST_SBUCK";
 export const SHARED_OBJECTS = {
   ST_SBUCK_SAVING_VAULT: {
     objectId:
-      "0xa335335bb6431c45910dbe5e4e2a80f2eafd21ab8e223dc62d226bbb9746d269",
-    initialSharedVersion: 357683086,
+      "0x2e05a1b0b5fb9ba739c03bec103f14f74fdb58c0648abb131c7955d9b8388c27",
+    initialSharedVersion: 385264059,
     mutable: true,
   },
   SBUCK_SAVING_VAULT_STRATEGY: {
     objectId:
-      "0x4ea8636c2ce349bec8e84ebb943bd78d4f5dbea65c32f5f03c134d532a1afed9",
-    initialSharedVersion: 357683087,
+      "0xd4bb78f48cef0f19a5b2fc30a3021f0c0a938a45106277cc2104128cc0c93e1b",
+    initialSharedVersion: 385264060,
     mutable: true,
   },
   // BUCKET
@@ -30,7 +30,7 @@ export const SHARED_OBJECTS = {
   },
 };
 const SAVING_VAULT_PACKAGE_ID =
-  "0xabae3cfeed5e54d6ae3ecd4209d3582833e4153fba658d8c8e0d8a1aba79dcfa";
+  "0x197886b6a23c8a84c208969b500cf87ac3049e2d879188c2fa91d1132cf1cfd1";
 
 export const TARGETS = {
   // SAVING_VAULT

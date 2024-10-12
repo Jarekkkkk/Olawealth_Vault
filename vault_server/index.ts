@@ -23,7 +23,7 @@ const vaultServer = new Server(keypair);
     // 3. join strategy to vault
     // await vaultServer.join_vault();
     // 4. cron job: rebalance
-    // await vaultServer.rebalance();
+    await vaultServer.rebalance();
     // admin functions
     // await vaultServer.set_performance_fee();
     // await vaultServer.set_withdraw_fee();

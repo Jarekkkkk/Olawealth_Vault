@@ -85,9 +85,7 @@ export async function stBuckSavingVaultWithdraw(
     buckBalance as any,
   );
 
-  const usdcCoin = cetusSwapBuckToUsdc(tx, senderAddress, buckCoin);
-
-  tx.transferObjects([usdcCoin], senderAddress);
+  console.log("tx", tx.blockData.transactions);
 
   return tx;
 }
